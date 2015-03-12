@@ -9,10 +9,10 @@ public class Island : MonoBehaviour {
 		gameObject.AddComponent <Terrain> ();
 		TerrainData illa = new TerrainData ();
 
-		illa.size = new Vector3(10, 600, 10);
-		illa.heightmapResolution = 512;
-		illa.baseMapResolution = 1024;
-		illa.SetDetailResolution(1024, 16);
+		illa.size = new Vector3(10, 128, 10);
+		illa.heightmapResolution = 1024;
+		illa.baseMapResolution = 256;
+		illa.SetDetailResolution(256, 16);
 
 		int heightmapWidth = illa.heightmapWidth;
 		int heightmapHeight = illa.heightmapHeight;
@@ -20,6 +20,7 @@ public class Island : MonoBehaviour {
 		Terrain terrain = gameObject.GetComponent<Terrain>();
 		terrainCollider.terrainData= illa;
 		terrain.terrainData = illa;
+		GenerateHeights (terrain, 12.5f);
 	
 	}
 	
@@ -28,5 +29,19 @@ public class Island : MonoBehaviour {
 	
 	}
 
+	void GenerateHeights(Terrain terrain, float tileSize)
+	{
+		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+		
+		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
+		{
+			for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
+			{
+				heights[i, k] = Mathf.PerlinNoise(((float)i / (float)terrain.terrainData.heightmapWidth) * tileSize, ((float)k / (float)terrain.terrainData.heightmapHeight) * tileSize)/10.0f;
+			}
+		}
+		
+		terrain.terrainData.SetHeights(0, 0, heights);
+	}
 
 }
