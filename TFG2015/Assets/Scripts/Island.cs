@@ -20,52 +20,68 @@ public class Island : MonoBehaviour {
 		Terrain terrain = gameObject.GetComponent<Terrain>();
 		terrainCollider.terrainData= illa;
 		terrain.terrainData = illa;
-		GenerateHeights (terrain, 100.5f);
+		GenerateNewMap (terrain);
+
 	
 	}
 
 	void GenerateNewMap(Terrain terrain){
-		Blob[] illes = new Blob[2];
+		Blob[] illes = new Blob[200];
 		float radi;
 		Vector2 coord_ini; //coordenades auxiliar per a generar els randoms
-		bool fin = false;
 		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+        
+        string deb_line = "";
 
 		for (int i = 0; i < illes.Length; i++) {
-			radi = Random.Range(1.0, 100.0) / 10;
-			coord_ini.x = Random.Range(0, 256);
-			coord_ini.y = Random.Range(0, 256);
+			radi = Random.Range(1, 100) /  10.0f;
+			coord_ini.x = Random.Range(0, 128);
+			coord_ini.y = Random.Range(0, 128);
 			
 			illes[i] = new Blob(radi, coord_ini);
 		}
-
+        
 		//////////////////////////////////////////
+        Debug.Log(terrain.terrainData.heightmapWidth);
+        Debug.Log(terrain.terrainData.heightmapHeight);
+        
 		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
 		{
 			for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
 			{
-				heights[i, k] = Mathf.PerlinNoise(
-										((float)i / (float)terrain.terrainData.heightmapWidth) * tileSize,
-										((float)k / (float)terrain.terrainData.heightmapHeight) * tileSize
-													)/10.0f;
-				heights[i,k] = setHeights(illes, i, k);
+                heights[i, k] = giffMeHeights(illes, new Vector2(i, k));
 			}
 		}
 
+        terrain.terrainData.SetHeights(0, 0, heights);
 
 	}
 
-	private float[,] setHeights(Blob[] illes, int x, int y){
+    private float giffMeHeights(Blob[] illes, Vector2 point)
+    {
+        float height = 0.0f;
+        float dist = 0.0f;
+        foreach (Blob b in illes)
+        {
+            dist = (b.coordinates - point).magnitude;
+            if (dist <= b.radius) height += calculaAlçadaEsfera(dist, b.radius, point);
+        }
+        return height;
+    }
 
-	}
+    private float calculaAlçadaEsfera(float dist, float rad, Vector2 point)
+    {
+        //Debug.Log("estic a calcula alçada esfera i m'ha donat V");
+        float res = Mathf.Sqrt((rad*rad) - (dist*dist));
+        return res / Mathf.PerlinNoise(((float)point.x / (float)1024) * 500.0f, ((float)point.y / (float)1024) * 500.0f) / 10.0f;
+
+    }
+
 	
 	void GenerateHeights(Terrain terrain, float tileSize)
 	{
 		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-
-		Debug.Log (terrain.terrainData.heightmapWidth);
-		Debug.Log (terrain.terrainData.heightmapHeight);
-
+        
 		int alt = 1;
 
 		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
