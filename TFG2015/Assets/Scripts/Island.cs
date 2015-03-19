@@ -26,17 +26,15 @@ public class Island : MonoBehaviour {
 	}
 
 	void GenerateNewMap(Terrain terrain){
-		Blob[] illes = new Blob[200];
+		Blob[] illes = new Blob[50];
 		float radi;
 		Vector2 coord_ini; //coordenades auxiliar per a generar els randoms
 		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
         
-        string deb_line = "";
-
 		for (int i = 0; i < illes.Length; i++) {
-			radi = Random.Range(1, 100) /  10.0f;
-			coord_ini.x = Random.Range(0, 128);
-			coord_ini.y = Random.Range(0, 128);
+			radi = Random.Range(10, 200) /  10.0f;
+			coord_ini.x = Random.Range(32, 100);
+			coord_ini.y = Random.Range(32, 100);
 			
 			illes[i] = new Blob(radi, coord_ini);
 		}
@@ -53,9 +51,42 @@ public class Island : MonoBehaviour {
 			}
 		}
 
+        float max = maxValue2D(heights);
+        heights = normalitzaArray(heights, max);
+
         terrain.terrainData.SetHeights(0, 0, heights);
 
 	}
+
+    private float[,] normalitzaArray(float[,] array, float val)
+    {
+        int len = (int)Mathf.Sqrt(array.Length);
+        for (int i = 0; i < len; i++)
+        {
+            for (int j = 0; j < len; j++)
+            {
+                array[i, j] /= val;
+            }
+        }
+        
+        return array;
+    }
+
+    private float maxValue2D(float[,] array)
+    {
+        float max = array[0, 0];
+        int len = (int)Mathf.Sqrt(array.Length);
+        for (int i = 0; i < len; i++)
+        {
+            for (int j = 0; j < len; j++)
+            {
+                array[i, j] *= Mathf.PerlinNoise(((float)i / (float)len) * 20, ((float)j / (float)len) * 20) / 10.0f;
+                if (array[i, j] > max) max = array[i, j];
+
+            }
+        }
+        return max;
+    }
 
     private float giffMeHeights(Blob[] illes, Vector2 point)
     {
@@ -73,7 +104,7 @@ public class Island : MonoBehaviour {
     {
         //Debug.Log("estic a calcula alçada esfera i m'ha donat V");
         float res = Mathf.Sqrt((rad*rad) - (dist*dist));
-        return res / Mathf.PerlinNoise(((float)point.x / (float)1024) * 500.0f, ((float)point.y / (float)1024) * 500.0f) / 10.0f;
+        return res;
 
     }
 
