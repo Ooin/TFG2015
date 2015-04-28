@@ -23,6 +23,8 @@ public class Island : MonoBehaviour {
 
     private Terrain terrain;
 
+    private List<Vector2> border_pixels;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -52,6 +54,8 @@ public class Island : MonoBehaviour {
         depth = 100;
         heightmapResolution = 256;
         nBlobs = 10;
+
+        border_pixels = new List<Vector2>();
     }
 
 	void GenerateNewMap(){
@@ -69,39 +73,54 @@ public class Island : MonoBehaviour {
         }
 
         generateHeightMap(illes);
-        terrain.terrainData.SetHeights(0, 0, mapHeights);
 
-        //float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-        
-        //////////////////////////////////////////
-        /*Debug.Log(terrain.terrainData.heightmapWidth);
-        Debug.Log(terrain.terrainData.heightmapHeight);
-        
-		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
-		{
-			for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
-			{
-                heights[i, k] = giffMeHeights(illes, new Vector2(i, k));
-			}
-		}
+        getBorder();
 
-        float max = maxValue2D(heights);
-        heights = normalitzaArray(heights, max);
-        */
-        /*
-        mapHeights = new float[heightmapResolution, heightmapResolution];
-        for (int i = 0; i < heightmapResolution; i++)
+        Debug.Log(border_pixels.Count);
+        /*foreach (Vector2 item in border_pixels)
         {
-            for (int j = 0; j < heightmapResolution; j++)
-            {
-                mapHeights[i, j] = 1;
-            }
+            mapHeights[(int) item.x, (int) item.y] = 1;
         }*/
 
+        terrain.terrainData.SetHeights(0, 0, mapHeights);
+
+        ExportTerrain exportador = new ExportTerrain();
+        exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
+
+        Mesh illa = new Mesh();
         
 
 	}
 
+    private void getBorder()
+    {
+        for (int i = 0; i < heightmapResolution; i++)
+        {
+            for (int j = 0; j < heightmapResolution; j++)
+            {
+                if (mapHeights[i, j] != 0)
+                {
+                    if (isBorder(i, j)) border_pixels.Add(new Vector2(i, j));
+                }
+            }
+        }
+    }
+
+    private bool isBorder(int x, int y)
+    {
+        float alt = 0;
+
+        for (int i = x - 1; i <= x + 1; i++)
+        {
+            for (int j = y - 1; j <= y+1; j++)
+            {
+                alt = mapHeights[i, j];
+                if (alt == 0 && i >= 0 && j >= 0 && i < heightmapResolution && j < heightmapResolution ) return true;
+            }
+        }
+        return false;
+    }
+    
     private void generateHeightMap(Blob[] illes)
     {
         worldHeights = new float[width, depth];
@@ -163,117 +182,18 @@ public class Island : MonoBehaviour {
         {
             for (int j = 0; j < heightmapResolution; j++)
             {
-                //if (i < 5 && j < 5) Debug.Log(imatgeBN.GetPixel(i, j).grayscale);
-                mapHeights[i, j] = (float) imatgeBN.GetPixel(i, j).r;
+                mapHeights[i, j] = (float) imatgeBN.GetPixel(i, j).r; //es indiferent si agafem R, G o B ja que tenen el mateix valor
             }
         }
     }
 
-    /*
-    private void normalitzaBlobs(Blob[] illes)
-    {
-        Blob[] temp = illes;
-        foreach (Blob aux in illes)
-        {
-            aux.x /= width;
-            aux.y /= depth;
-            aux.radius /= height;
-         }
-        generaHeightMap(illes);
-    }
-
-    private void generaHeightMap(Blob[] illes)
-    {
-        mapHeights = new float[heightmapResolution, heightmapResolution];
-        float alt, dist, auxAlt;
-        Vector2 aux1, aux2;
-        for (int i = 0; i < heightmapResolution; i++)
-        {
-            for (int j = 0; j < heightmapResolution; j++)
-            {
-                aux1 = new Vector2((float) i / heightmapResolution,(float) j / heightmapResolution);
-                alt = 0.0f;
-                foreach (Blob aux in illes)
-                {
-                    aux2 = new Vector2(aux.x, aux.y);
-                    dist = (aux2-aux1).magnitude;
-                    
-
-                    if( dist < aux.radius )
-                    {
-                        auxAlt = calculaAlçadaEsfera(dist , aux.radius);
-                        if (alt < auxAlt) alt = auxAlt;
-                    }
-                }
-                mapHeights[i, j] = alt;
-            }
-        }
-    }
-    */
     private float calculaAlçadaEsfera(float catet, float hipotenusa)
     {
-        //Debug.Log("estic a calcula alçada esfera i m'ha donat V");
         float res = Mathf.Sqrt((hipotenusa * hipotenusa) - (catet * catet));
         return res;
 
     }
 
-    /*
-    //Genera el mapa d'alçades del mon en coordenades de mon
-    private void generateHeightsMon(Blob[] illes)
-    {
-        worldHeights = new float[width, depth];
-        //inicialitzem totes les posicions a zero, per assegurar-nos que esta be
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < depth; j++)
-            {
-                float alt = 0.0f;
-                foreach (Blob aux in illes)
-                {
-                    if (aux.coordinates.x == i && aux.coordinates.y == j)
-                    {
-
-                    }
-                }
-                normalizeHeightsMon();
-            }
-        }
-
-        
-
-    }
-    //Normalitza el mapa d'alçades del mon.
-    private void normalizeHeightsMon()
-    {
-        normalizedWorldHeights = new float[width, depth];
-
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < depth; j++)
-            {
-                normalizedWorldHeights[i,j] = worldHeights[i,j] / height;
-            }
-        }
-        rasterizeHeights();
-    }
-    //Passem de coordenades de mon a coordenades de height map
-    private void rasterizeHeights()
-    {
-        //inicialitzem el mapa d'alçades definitiu.
-        mapHeights = new float[heightmapResolution, heightmapResolution];
-        for (int i = 0; i < heightmapResolution; i++)
-        {
-            for (int j = 0; j < heightmapResolution; j++)
-            {
-                mapHeights[i,j] = 0;
-            }
-        }
-
-        //
-
-    }
-    */
     private float[,] normalitzaArray(float[,] array, float val)
     {
         int len = (int)Mathf.Sqrt(array.Length);
@@ -303,19 +223,6 @@ public class Island : MonoBehaviour {
         }
         return max;
     }
-    /*
-    private float giffMeHeights(Blob[] illes, Vector2 point)
-    {
-        float height = 0.0f;
-        float dist = 0.0f;
-        foreach (Blob b in illes)
-        {
-            dist = (b.coordinates - point).magnitude;
-            if (dist <= b.radius) height += calculaAlçadaEsfera(dist, b.radius, point);
-        }
-        return height;
-    }
-    */
 
     void GenerateHeights(Terrain terrain, float tileSize)
 	{

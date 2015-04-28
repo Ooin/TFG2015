@@ -47,6 +47,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Blob.cs" />
+     <Compile Include="Assets\Scripts\BlobGen.cs" />
+     <Compile Include="Assets\Scripts\ExportTerrain.cs" />
      <Compile Include="Assets\Scripts\Island.cs" />
      <Compile Include="Assets\Scripts\TextureScale.cs" />
  <Reference Include="UnityEngine.UI">
