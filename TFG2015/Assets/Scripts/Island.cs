@@ -25,6 +25,16 @@ public class Island : MonoBehaviour {
 
     private List<Vector2> border_pixels;
 
+    enum SelectorColors
+    {
+        Neu,
+        Pedra,
+        Gespa,
+        Bosc,
+        Sorra,
+        Aigua
+    };
+
 	// Use this for initialization
 	void Start ()
     {
@@ -89,12 +99,61 @@ public class Island : MonoBehaviour {
         terrain.terrainData.SetHeights(0, 0, mapHeights);
 
         ExportTerrain exportador = new ExportTerrain();
-        //MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer> ();
+        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer> ();
         MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
         //MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
         Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
         Debug.Log(mesh.vertexCount);
         meshFilter.mesh = mesh;
+
+        //Cal assignar un shader custom per a poder veure els colors dels vertexs.
+        meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
+        
+        Color colorT = new Color(0.0f, 1.0f, 1.0f, 1.0f);
+
+        /*
+         * Neu      --  Blanc           --  255, 255, 255
+         * Pedra    --  gris(os)        --  96, 96, 96
+         * Gespa    --  Verd Clar       --  0, 204, 0
+         * Bosc     --  Verd Fosc       --  51, 102, 0
+         * Sorra    --  Marró Clard     --  134, 128, 76
+         * Aigua    --  Blau fosc       --  0, 102, 204
+         */
+        Color[] seleccióColors = {new Color(1.0f, 1.0f, 1.0f, 1.0f),
+                                     new Color(96f/255f, 96f/255f, 96f/255f, 1.0f),
+                                     new Color(0f/255f, 204f/255f, 0f/255f, 1.0f),
+                                     new Color(51f/255f, 102f/255f, 0f/255f, 1.0f),
+                                     new Color(134f/255f, 128f/255f, 76f/255f, 1.0f),
+                                     new Color(0f/255f, 102f/255f, 204f/255f, 1.0f)    };
+        
+        Color[] colors = new Color[mesh.vertices.Length];
+        Vector3[] vertexs = mesh.vertices;
+        float alt = 0.0f;
+        float maxAlt = 0.0f;
+
+        foreach (Vector3 aux in vertexs)
+        {
+            if (aux.y > maxAlt) maxAlt = aux.y;
+        }
+
+        Debug.Log("La merda fa --> " + maxAlt.ToString());
+
+        for (int i = 0; i < colors.Length; i++)
+        {
+            alt = vertexs[i].y;
+            if (alt / maxAlt > 0.9f) colorT = seleccióColors[(int)SelectorColors.Neu];
+            else if (alt / maxAlt > 0.7f) colorT = seleccióColors[(int)SelectorColors.Pedra];
+            else if (alt / maxAlt > 0.4f) colorT = seleccióColors[(int)SelectorColors.Gespa];
+            else if (alt / maxAlt > 0.2f) colorT = seleccióColors[(int)SelectorColors.Bosc];
+            else if (alt != 0) colorT = seleccióColors[(int)SelectorColors.Sorra];
+            else colorT = seleccióColors[(int)SelectorColors.Aigua];
+            //if ((i % 4) == 0)
+              //  colorT = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+            colors[i] = colorT;
+        }
+
+        mesh.colors = colors;
+        mesh.RecalculateNormals();
 
 	}
 

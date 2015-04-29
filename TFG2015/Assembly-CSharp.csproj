@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\ExportTerrain.cs" />
      <Compile Include="Assets\Scripts\Island.cs" />
      <Compile Include="Assets\Scripts\TextureScale.cs" />
+     <None Include="Assets\Scripts\Color.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
