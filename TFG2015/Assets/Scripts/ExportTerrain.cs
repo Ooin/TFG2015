@@ -25,7 +25,7 @@ class ExportTerrain
     int progressUpdateInterval = 10000;
 
     //[MenuItem("Terrain/Export To Obj...")]
-    public void Init(Terrain terrainObject, SaveFormat saveFormat, SaveResolution saveResolution)
+    public Mesh Init(Terrain terrainObject, SaveFormat saveFormat, SaveResolution saveResolution)
     {
         terrain = null;
         //Terrain terrainObject = Selection.activeObject as Terrain;
@@ -43,13 +43,13 @@ class ExportTerrain
 
         saveResolution = this.saveResolution;
 
-        Export();
+        Mesh temp = Export();
+        return temp;
     }
     
-    private void Export()
+    private Mesh Export()
     {
         string fileName = (String)Directory.GetCurrentDirectory() + "\\terrain.obj";// EditorUtility.SaveFilePanel("Export .obj file", "", "Terrain", "obj");
-        Debug.Log((String)Directory.GetCurrentDirectory() + "terrain.obj");
         int w = terrain.heightmapWidth;
         int h = terrain.heightmapHeight;
         Vector3 meshScale = terrain.size;
@@ -119,6 +119,19 @@ class ExportTerrain
             }
         }
 
+        //Suposadament fins a aqui ja tenim tot el que hauria de ser una MESH.
+        //tVertices conté tots els vertexs
+        //tUV conté totes les UVs
+        //tPolys conté els triangles.
+
+        Mesh test = new Mesh();
+        test.vertices = tVertices;
+        test.triangles = tPolys;
+        test.uv = tUV;
+
+        return test;
+
+        /*
         // Export to .obj
         StreamWriter sw = new StreamWriter(fileName);
         try
@@ -180,7 +193,7 @@ class ExportTerrain
         }
         sw.Close();
 
-        terrain = null;
+        terrain = null;*/
     }
 
 }

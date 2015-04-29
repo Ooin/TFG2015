@@ -29,8 +29,8 @@ public class Island : MonoBehaviour {
 	void Start ()
     {
         init();
-		TerrainCollider terrainCollider = gameObject.AddComponent <TerrainCollider> ();
-		terrain = gameObject.AddComponent <Terrain> ();
+        TerrainCollider terrainCollider = gameObject.AddComponent<TerrainCollider>();
+        terrain = gameObject.AddComponent<Terrain>();
 		TerrainData illa = new TerrainData ();
 
         illa.heightmapResolution = heightmapResolution;
@@ -43,6 +43,10 @@ public class Island : MonoBehaviour {
 		terrain.terrainData = illa;
 
 		GenerateNewMap ();
+
+        Destroy(terrain);
+        Destroy(terrainCollider);
+        Destroy(illa);
 	
 	}
 
@@ -85,10 +89,12 @@ public class Island : MonoBehaviour {
         terrain.terrainData.SetHeights(0, 0, mapHeights);
 
         ExportTerrain exportador = new ExportTerrain();
-        exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
-
-        Mesh illa = new Mesh();
-        
+        //MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer> ();
+        MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+        //MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+        Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
+        Debug.Log(mesh.vertexCount);
+        meshFilter.mesh = mesh;
 
 	}
 
