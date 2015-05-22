@@ -5,23 +5,29 @@ using System.IO;
 
 public class Island : MonoBehaviour {
 
-    //matrius que contenen les alçades en coordenades de mon i coordenades de "heightMap"
-    private float[,] worldHeights;
-    private float[,] normalizedWorldHeights;
+    //Definitives ISLAND.CS
     private float[,] mapHeights;
-
-    private Texture2D imatgeBN;
 
     //Resolucion del heightmap en escales potencies de 2 fins a 2048
     public int heightmapResolution;
+
     //alçada, amplada i profunditat del mon
+    //posiblement ho fem fixe, amb dos o tres opcions de mapa
     public int height;
     public int width;
     public int depth;
+    ////////////////////////////////////////////////////
+
+    //matrius que contenen les alçades en coordenades de mon i coordenades de "heightMap"
+    private float[,] worldHeights;
+    private float[,] normalizedWorldHeights;
+    
+    private Texture2D imatgeBN;
+
     //Numero de blobs que es generen
     public int nBlobs;
 
-    private Terrain terrain;
+    //ELIMINAR SI O SI
 
     private List<Vector2> border_pixels;
 
@@ -40,25 +46,150 @@ public class Island : MonoBehaviour {
     {
         init();
         TerrainCollider terrainCollider = gameObject.AddComponent<TerrainCollider>();
-        terrain = gameObject.AddComponent<Terrain>();
+        Terrain terrain = gameObject.AddComponent<Terrain>();
 		TerrainData illa = new TerrainData ();
 
         illa.heightmapResolution = heightmapResolution;
         illa.size = new Vector3(width, height, depth);
         
-		//TerrainCollider terrainCollider = gameObject.GetComponent<TerrainCollider>();
-		//Terrain terrain = gameObject.GetComponent<Terrain>();
-
 		terrainCollider.terrainData= illa;
 		terrain.terrainData = illa;
 
-		GenerateNewMap ();
+        HeightMapGenerator generator = new HeightMapGenerator();
+
+        mapHeights = generator.generateHeightMap(width, height, depth, heightmapResolution, nBlobs);
+
+        terrain.terrainData.SetHeights(0, 0, mapHeights);
+
+        ExportTerrain exportador = new ExportTerrain();
+        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+        Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
+        meshFilter.mesh = mesh;
+
+        
+        //setColorSelection(mesh);
+        meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
+        /*
+        Material[] mats = new Material[6];
+        mats[0] = Resources.Load("water", typeof(Material)) as Material;
+        mats[1] = Resources.Load("sand", typeof(Material)) as Material;
+        mats[2] = Resources.Load("forest", typeof(Material)) as Material;
+        mats[3] = Resources.Load("grass", typeof(Material)) as Material;
+        mats[4] = Resources.Load("stone", typeof(Material)) as Material;
+        mats[5] = Resources.Load("snow", typeof(Material)) as Material;
+
+        meshRenderer.materials = mats;*/
 
         Destroy(terrain);
         Destroy(terrainCollider);
         Destroy(illa);
 	
 	}
+
+    private void setColorSelection(Mesh mesh)
+    {
+        float alt = 0.0f;
+        float maxAlt = 0.0f;
+
+        //resize dels vertexs per a que s'assembli a "Godus"
+        /*
+        
+        float maxim = 0.0f;
+        foreach (Vector3 aux in vertexs)
+        {
+            if (aux.y > maxim) maxim = aux.y;
+        }
+
+        float auxalt = 0.0f;
+        for (int i = 0; i < vertexs.Length; i++)
+        {
+            auxalt = vertexs[i].y;
+            auxalt /= maxim;
+            if (auxalt > 0.9) vertexs[i].y = maxim * 1.0f;
+            else if (auxalt > 0.8f) vertexs[i].y = maxim * 0.9f;
+            else if (auxalt > 0.7f) vertexs[i].y = maxim * 0.8f;
+            else if (auxalt > 0.6f) vertexs[i].y = maxim * 0.7f;
+            else if (auxalt > 0.5f) vertexs[i].y = maxim * 0.6f;
+            else if (auxalt > 0.4f) vertexs[i].y = maxim * 0.5f;
+            else if (auxalt > 0.3f) vertexs[i].y = maxim * 0.4f;
+            else if (auxalt > 0.2f) vertexs[i].y = maxim * 0.3f;
+            else if (auxalt > 0.1f) vertexs[i].y = maxim * 0.2f;
+            else if (auxalt != 0.0f) vertexs[i].y = maxim * 0.1f;
+            else vertexs[i].y = 0.0f;
+        }
+
+        mesh.vertices = vertexs;
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();*/
+
+        //La List<Tris> no em permet fer el ADD de l'objecte Tris aixi que ho farem tot parametritzat
+        List<int> trisNeu = new List<int>();
+        List<int> trisPedra = new List<int>();
+        List<int> trisGespa = new List<int>();
+        List<int> trisBosc = new List<int>();
+        List<int> trisSorra = new List<int>();
+        List<int> trisAigua = new List<int>();
+        List<int> auxList = new List<int>();
+        
+
+        float y1, y2, y3;
+        int j = 0;
+
+        foreach (Vector3 aux in mesh.vertices)
+        {
+            if (aux.y > maxAlt) maxAlt = aux.y;
+        }
+        
+        for (int i = 0; i < mesh.triangles.Length; i+=3)
+        {
+            y1 = mesh.vertices[mesh.triangles[i]].y;
+            y2 = mesh.vertices[mesh.triangles[i + 1]].y;
+            y3 = mesh.vertices[mesh.triangles[i + 2]].y;
+
+            alt = ((y1 + y2 + y3) / 3)/maxAlt;
+            
+            if (alt >= 0.95f)
+            {
+                auxList = trisNeu;
+            }
+            else if (alt > 0.75f)
+            {
+                auxList = trisPedra;
+            }
+            else if (alt > 0.5f)
+            {
+                auxList = trisGespa;
+            }
+            else if (alt > 0.15f)
+            {
+                auxList = trisBosc;
+            }
+            else if (alt != 0)
+            {
+                auxList = trisSorra;
+            }
+            else
+            {
+                auxList = trisAigua;
+            }
+            auxList.Add(mesh.triangles[i]);
+            auxList.Add(mesh.triangles[i + 1]);
+            auxList.Add(mesh.triangles[i + 2]);
+        
+        }
+        
+        mesh.subMeshCount = 6;
+        mesh.SetTriangles(trisAigua.ToArray(), 0);
+        mesh.SetTriangles(trisSorra.ToArray(), 1);
+        mesh.SetTriangles(trisBosc.ToArray(), 2);
+        mesh.SetTriangles(trisGespa.ToArray(), 3);
+        mesh.SetTriangles(trisPedra.ToArray(), 4);
+        mesh.SetTriangles(trisNeu.ToArray(), 5);
+
+        //mesh.RecalculateBounds();
+        //mesh.RecalculateNormals();
+    }
 
     //inicialitzacio de les variables publiques a la primera execucio
     void init()
@@ -67,96 +198,13 @@ public class Island : MonoBehaviour {
         width = 100;
         depth = 100;
         heightmapResolution = 256;
-        nBlobs = 10;
+        nBlobs = 1;
 
         border_pixels = new List<Vector2>();
     }
 
-	void GenerateNewMap(){
-        
-		Blob[] illes = new Blob[nBlobs];
-		float radi, auxX, auxY;//coordenades auxiliar per a generar els randoms
-        
-        for (int i = 0; i < nBlobs; i++)
-        {
-            radi = Random.Range(0, height/4);
-            auxX = Random.Range((int) width / 4,(int) 3 * width / 4);
-            auxY = Random.Range((int) depth / 4,(int) 3 * depth / 4);
 
-            illes[i] = new Blob(radi, auxX, auxY);
-        }
-
-        generateHeightMap(illes);
-
-        getBorder();
-
-        Debug.Log(border_pixels.Count);
-        /*foreach (Vector2 item in border_pixels)
-        {
-            mapHeights[(int) item.x, (int) item.y] = 1;
-        }*/
-
-        terrain.terrainData.SetHeights(0, 0, mapHeights);
-
-        ExportTerrain exportador = new ExportTerrain();
-        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer> ();
-        MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-        //MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
-        Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
-        Debug.Log(mesh.vertexCount);
-        meshFilter.mesh = mesh;
-
-        //Cal assignar un shader custom per a poder veure els colors dels vertexs.
-        meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
-        
-        Color colorT = new Color(0.0f, 1.0f, 1.0f, 1.0f);
-
-        /*
-         * Neu      --  Blanc           --  255, 255, 255
-         * Pedra    --  gris(os)        --  96, 96, 96
-         * Gespa    --  Verd Clar       --  0, 204, 0
-         * Bosc     --  Verd Fosc       --  51, 102, 0
-         * Sorra    --  Marró Clard     --  134, 128, 76
-         * Aigua    --  Blau fosc       --  0, 102, 204
-         */
-        Color[] seleccióColors = {new Color(1.0f, 1.0f, 1.0f, 1.0f),
-                                     new Color(96f/255f, 96f/255f, 96f/255f, 1.0f),
-                                     new Color(0f/255f, 204f/255f, 0f/255f, 1.0f),
-                                     new Color(51f/255f, 102f/255f, 0f/255f, 1.0f),
-                                     new Color(134f/255f, 128f/255f, 76f/255f, 1.0f),
-                                     new Color(0f/255f, 102f/255f, 204f/255f, 1.0f)    };
-        
-        Color[] colors = new Color[mesh.vertices.Length];
-        Vector3[] vertexs = mesh.vertices;
-        float alt = 0.0f;
-        float maxAlt = 0.0f;
-
-        foreach (Vector3 aux in vertexs)
-        {
-            if (aux.y > maxAlt) maxAlt = aux.y;
-        }
-
-        Debug.Log("La merda fa --> " + maxAlt.ToString());
-
-        for (int i = 0; i < colors.Length; i++)
-        {
-            alt = vertexs[i].y;
-            if (alt / maxAlt > 0.9f) colorT = seleccióColors[(int)SelectorColors.Neu];
-            else if (alt / maxAlt > 0.7f) colorT = seleccióColors[(int)SelectorColors.Pedra];
-            else if (alt / maxAlt > 0.4f) colorT = seleccióColors[(int)SelectorColors.Gespa];
-            else if (alt / maxAlt > 0.2f) colorT = seleccióColors[(int)SelectorColors.Bosc];
-            else if (alt != 0) colorT = seleccióColors[(int)SelectorColors.Sorra];
-            else colorT = seleccióColors[(int)SelectorColors.Aigua];
-            //if ((i % 4) == 0)
-              //  colorT = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
-            colors[i] = colorT;
-        }
-
-        mesh.colors = colors;
-        mesh.RecalculateNormals();
-
-	}
-
+    //metodes per reciclar
     private void getBorder()
     {
         for (int i = 0; i < heightmapResolution; i++)
@@ -177,137 +225,16 @@ public class Island : MonoBehaviour {
 
         for (int i = x - 1; i <= x + 1; i++)
         {
-            for (int j = y - 1; j <= y+1; j++)
+            for (int j = y - 1; j <= y + 1; j++)
             {
                 alt = mapHeights[i, j];
-                if (alt == 0 && i >= 0 && j >= 0 && i < heightmapResolution && j < heightmapResolution ) return true;
+                if (alt == 0 && i >= 0 && j >= 0 && i < heightmapResolution && j < heightmapResolution) return true;
             }
         }
         return false;
     }
-    
-    private void generateHeightMap(Blob[] illes)
-    {
-        worldHeights = new float[width, depth];
-        Texture2D imatgeBN = new Texture2D(width, depth);
-        Vector2 auxVec1, auxVec2;
-        float dist, alt, auxAlt;
-        int count = 0;
-        //generem el mapa en coordenades de mon
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < depth; j++)
-            {
-                auxVec1 = new Vector2(i, j); //la posicio del punt
-                alt = 0.0f; 
-                foreach (Blob auxBlob in illes)
-                {
-                    auxVec2 = new Vector2(auxBlob.x, auxBlob.y); //la posicio del centre del blob
-                    dist = (auxVec1 - auxVec2).magnitude;
-                    if (dist < auxBlob.radius){
-                        auxAlt = Mathf.Sqrt((auxBlob.radius * auxBlob.radius) - (dist * dist));
-                        if (alt < auxAlt) alt = auxAlt;
-                        count++;
-                    }
-                }
-                worldHeights[i, j] = alt;
-            }
-        }
-        Debug.Log("Comptabilitzo " + count.ToString() + " caselles amb dades sense normalitzar");
-        //normalitzem les alçades
-        count = 0;
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < depth; j++)
-            {
-                worldHeights[i, j] = (float) worldHeights[i, j] / height;
-                if (worldHeights[i, j] > 0) count++;
-            }
-        }
-        Debug.Log("Comptabilitzo " + count.ToString() + " caselles amb dades normalitzades");
-
-
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < depth; j++)
-            {
-                imatgeBN.SetPixel(i, j, new Color(worldHeights[i, j], worldHeights[i, j], worldHeights[i, j]));
-            }
-        }
-        byte[] bytes = imatgeBN.EncodeToPNG();
-        File.WriteAllBytes(Application.dataPath + "/../imgOriginal.png", bytes);
-
-        TextureScale.Bilinear(imatgeBN, heightmapResolution, heightmapResolution);
-
-        bytes = imatgeBN.EncodeToPNG();
-        File.WriteAllBytes(Application.dataPath + "/../imgFinal.png", bytes);
-
-        mapHeights = new float[heightmapResolution, heightmapResolution];
-        for (int i = 0; i < heightmapResolution; i++)
-        {
-            for (int j = 0; j < heightmapResolution; j++)
-            {
-                mapHeights[i, j] = (float) imatgeBN.GetPixel(i, j).r; //es indiferent si agafem R, G o B ja que tenen el mateix valor
-            }
-        }
-    }
-
-    private float calculaAlçadaEsfera(float catet, float hipotenusa)
-    {
-        float res = Mathf.Sqrt((hipotenusa * hipotenusa) - (catet * catet));
-        return res;
-
-    }
-
-    private float[,] normalitzaArray(float[,] array, float val)
-    {
-        int len = (int)Mathf.Sqrt(array.Length);
-        for (int i = 0; i < len; i++)
-        {
-            for (int j = 0; j < len; j++)
-            {
-                array[i, j] /= val;
-            }
-        }
-        
-        return array;
-    }
-
-    private float maxValue2D(float[,] array)
-    {
-        float max = array[0, 0];
-        int len = (int)Mathf.Sqrt(array.Length);
-        for (int i = 0; i < len; i++)
-        {
-            for (int j = 0; j < len; j++)
-            {
-                array[i, j] *= Mathf.PerlinNoise(((float)i / (float)len) * 20, ((float)j / (float)len) * 20) / 10.0f;
-                if (array[i, j] > max) max = array[i, j];
-
-            }
-        }
-        return max;
-    }
-
-    void GenerateHeights(Terrain terrain, float tileSize)
-	{
-		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-        
-		int alt = 1;
-
-		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
-		{
-			for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
-			{
-				heights[i, k] = Mathf.PerlinNoise(((float)i / (float)terrain.terrainData.heightmapWidth) * tileSize, ((float)k / (float)terrain.terrainData.heightmapHeight) * tileSize)/10.0f;
-			}
-		}
-		
-		terrain.terrainData.SetHeights(0, 0, heights);
-	}
-
+   
 	// Update is called once per frame
-	void Update () {
-	}
+	void Update () {    }
 
 }

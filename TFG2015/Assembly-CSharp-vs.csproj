@@ -49,9 +49,12 @@
      <Compile Include="Assets\Scripts\Blob.cs" />
      <Compile Include="Assets\Scripts\BlobGen.cs" />
      <Compile Include="Assets\Scripts\ExportTerrain.cs" />
+     <Compile Include="Assets\Scripts\HeightMapGenerator.cs" />
      <Compile Include="Assets\Scripts\Island.cs" />
      <Compile Include="Assets\Scripts\TextureScale.cs" />
+     <Compile Include="Assets\Scripts\Tris.cs" />
      <None Include="Assets\Scripts\Color.shader" />
+     <None Include="Assets\Scripts\NewShader.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
