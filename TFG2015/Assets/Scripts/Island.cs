@@ -67,10 +67,9 @@ public class Island : MonoBehaviour {
         Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
         meshFilter.mesh = mesh;
 
-        
-        //setColorSelection(mesh);
-        meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
-        /*
+        //meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
+
+        setColorSelection(mesh);
         Material[] mats = new Material[6];
         mats[0] = Resources.Load("water", typeof(Material)) as Material;
         mats[1] = Resources.Load("sand", typeof(Material)) as Material;
@@ -79,7 +78,8 @@ public class Island : MonoBehaviour {
         mats[4] = Resources.Load("stone", typeof(Material)) as Material;
         mats[5] = Resources.Load("snow", typeof(Material)) as Material;
 
-        meshRenderer.materials = mats;*/
+        meshRenderer.materials = mats;
+        //setGodusShape(mesh);
 
         Destroy(terrain);
         Destroy(terrainCollider);
@@ -87,13 +87,10 @@ public class Island : MonoBehaviour {
 	
 	}
 
-    private void setColorSelection(Mesh mesh)
+    private void setGodusShape(Mesh mesh)
     {
-        float alt = 0.0f;
-        float maxAlt = 0.0f;
-
         //resize dels vertexs per a que s'assembli a "Godus"
-        /*
+        Vector3[] vertexs = mesh.vertices;
         
         float maxim = 0.0f;
         foreach (Vector3 aux in vertexs)
@@ -121,20 +118,33 @@ public class Island : MonoBehaviour {
 
         mesh.vertices = vertexs;
         mesh.RecalculateBounds();
-        mesh.RecalculateNormals();*/
+        mesh.RecalculateNormals();
+    }
 
-        //La List<Tris> no em permet fer el ADD de l'objecte Tris aixi que ho farem tot parametritzat
-        List<int> trisNeu = new List<int>();
-        List<int> trisPedra = new List<int>();
-        List<int> trisGespa = new List<int>();
-        List<int> trisBosc = new List<int>();
-        List<int> trisSorra = new List<int>();
-        List<int> trisAigua = new List<int>();
-        List<int> auxList = new List<int>();
+    private void setColorSelection(Mesh mesh)
+    {
+        float alt = 0.0f;
+        float maxAlt = 0.0f;
         
+        //La List<Tris> no em permet fer el ADD de l'objecte Tris aixi que ho farem tot parametritzat
+        List<int> trisNeu = new List<int>(); trisNeu.Capacity = mesh.triangles.Length * 2 / 3;
+        List<int> trisPedra = new List<int>(); trisPedra.Capacity = mesh.triangles.Length * 2 / 3;
+        List<int> trisGespa = new List<int>(); trisGespa.Capacity = mesh.triangles.Length * 2 / 3;
+        List<int> trisBosc = new List<int>(); trisBosc.Capacity = mesh.triangles.Length * 2 / 3;
+        List<int> trisSorra = new List<int>(); trisSorra.Capacity = mesh.triangles.Length * 2 / 3;
+        List<int> trisAigua = new List<int>(); trisAigua.Capacity = mesh.triangles.Length * 2 / 3;
+        List<int> auxList = new List<int>();
+        /*
+        int[] trisNeu = new int[mesh.triangles.Length];
+        int[] trisPedra = new int[mesh.triangles.Length];
+        int[] trisGespa = new int[mesh.triangles.Length];
+        int[] trisBosc = new int[mesh.triangles.Length];
+        int[] trisSorra = new int[mesh.triangles.Length];
+        int[] trisAigua = new int[mesh.triangles.Length];
+        */
+        int indexNeu = 0, indexPedra = 0, indexGespa = 0, indexSorra = 0, indexAigua = 0, indexBosc = 0, indexAuxList = 0;
 
         float y1, y2, y3;
-        int j = 0;
 
         foreach (Vector3 aux in mesh.vertices)
         {
@@ -152,30 +162,65 @@ public class Island : MonoBehaviour {
             if (alt >= 0.95f)
             {
                 auxList = trisNeu;
+                /*
+                trisNeu[indexNeu] = mesh.triangles[i];
+                trisNeu[indexNeu+1] = mesh.triangles[i+1];
+                trisNeu[indexNeu+2] = mesh.triangles[i+2];
+                indexNeu += 3;
+                 */
             }
             else if (alt > 0.75f)
             {
                 auxList = trisPedra;
+                /*
+                trisPedra[indexPedra] = mesh.triangles[i];
+                trisPedra[indexPedra + 1] = mesh.triangles[i + 1];
+                trisPedra[indexPedra + 2] = mesh.triangles[i + 2];
+                indexPedra += 3;
+                 */
             }
             else if (alt > 0.5f)
             {
                 auxList = trisGespa;
+                /*trisGespa[indexGespa] = mesh.triangles[i];
+                trisGespa[indexGespa + 1] = mesh.triangles[i + 1];
+                trisGespa[indexGespa + 2] = mesh.triangles[i + 2];
+                indexGespa += 3;*/
             }
             else if (alt > 0.15f)
             {
                 auxList = trisBosc;
+                /*
+                trisBosc[indexBosc] = mesh.triangles[i];
+                trisBosc[indexBosc + 1] = mesh.triangles[i + 1];
+                trisBosc[indexBosc + 2] = mesh.triangles[i + 2];
+                indexBosc += 3;
+                 */
             }
             else if (alt != 0)
             {
                 auxList = trisSorra;
+                /*
+                trisSorra[indexSorra] = mesh.triangles[i];
+                trisSorra[indexSorra + 1] = mesh.triangles[i + 1];
+                trisSorra[indexSorra + 2] = mesh.triangles[i + 2];
+                indexSorra += 3;
+                 */
             }
             else
             {
                 auxList = trisAigua;
+                /*
+                trisAigua[indexAigua] = mesh.triangles[i];
+                trisAigua[indexAigua + 1] = mesh.triangles[i + 1];
+                trisAigua[indexAigua + 2] = mesh.triangles[i + 2];
+                indexAigua += 3;
+                 */
             }
             auxList.Add(mesh.triangles[i]);
-            auxList.Add(mesh.triangles[i + 1]);
-            auxList.Add(mesh.triangles[i + 2]);
+            auxList.Add(mesh.triangles[i+1]);
+            auxList.Add(mesh.triangles[i+2]);
+
         
         }
         
@@ -186,9 +231,6 @@ public class Island : MonoBehaviour {
         mesh.SetTriangles(trisGespa.ToArray(), 3);
         mesh.SetTriangles(trisPedra.ToArray(), 4);
         mesh.SetTriangles(trisNeu.ToArray(), 5);
-
-        //mesh.RecalculateBounds();
-        //mesh.RecalculateNormals();
     }
 
     //inicialitzacio de les variables publiques a la primera execucio
@@ -198,42 +240,11 @@ public class Island : MonoBehaviour {
         width = 100;
         depth = 100;
         heightmapResolution = 256;
-        nBlobs = 1;
+        nBlobs = 20;
 
         border_pixels = new List<Vector2>();
     }
-
-
-    //metodes per reciclar
-    private void getBorder()
-    {
-        for (int i = 0; i < heightmapResolution; i++)
-        {
-            for (int j = 0; j < heightmapResolution; j++)
-            {
-                if (mapHeights[i, j] != 0)
-                {
-                    if (isBorder(i, j)) border_pixels.Add(new Vector2(i, j));
-                }
-            }
-        }
-    }
-
-    private bool isBorder(int x, int y)
-    {
-        float alt = 0;
-
-        for (int i = x - 1; i <= x + 1; i++)
-        {
-            for (int j = y - 1; j <= y + 1; j++)
-            {
-                alt = mapHeights[i, j];
-                if (alt == 0 && i >= 0 && j >= 0 && i < heightmapResolution && j < heightmapResolution) return true;
-            }
-        }
-        return false;
-    }
-   
+  
 	// Update is called once per frame
 	void Update () {    }
 

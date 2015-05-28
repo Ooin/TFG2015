@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\ExportTerrain.cs" />
      <Compile Include="Assets\Scripts\HeightMapGenerator.cs" />
      <Compile Include="Assets\Scripts\Island.cs" />
+     <Compile Include="Assets\Scripts\Soroll.cs" />
      <Compile Include="Assets\Scripts\TextureScale.cs" />
      <Compile Include="Assets\Scripts\Tris.cs" />
      <None Include="Assets\Scripts\Color.shader" />

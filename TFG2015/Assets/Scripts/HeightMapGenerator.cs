@@ -30,10 +30,7 @@ public class HeightMapGenerator {
         int count = 0;
         float aux;
         float a, b, c, e = (float)System.Math.E;
-
-        b = 0;
-        c = 5.0f;
-       
+               
         //generem el mapa en coordenades de mon
         for (int i = 0; i < width; i++)
         {
@@ -44,20 +41,59 @@ public class HeightMapGenerator {
                 foreach (Blob auxBlob in illes)
                 {
                     auxVec2 = new Vector2(auxBlob.x, auxBlob.y); //la posicio del centre del blob
-                    dist = (auxVec1 - auxVec2).magnitude;
-                    if (dist < auxBlob.radius)
+                    if (auxBlob.shape == 0)
                     {
-                     
-                        alt += gauss(b, c, dist) * height;
-                        //alt = phi(dist);
+                        dist = (auxVec1 - auxVec2).magnitude;
+                        if (dist < auxBlob.radius)
+                        {
+
+                            
+                            //alt = phi(dist);
+                            //if (alt < auxAlt) alt = auxAlt;
+
+                            switch (auxBlob.profile)
+                            {
+                                case 0:
+                                    alt += gauss(auxBlob.radius/2, 10.0f, dist);
+                                    break;
+                                case 1:
+                                    alt += auxBlob.radius / 2;
+                                    break;
+                                case 2:
+                                    alt += Mathf.Sqrt(Mathf.Pow(auxBlob.radius, 2) - Mathf.Pow(dist, 2));
+                                    break;
+                            }
+                        }
                         
-                        //if (alt < auxAlt) alt = auxAlt;
+                       
+                    }
+                    else
+                    {
+                        float minX = auxBlob.x - auxBlob.radius;
+                        float maxX = auxBlob.x + auxBlob.radius;
+                        float minY = auxBlob.y - auxBlob.radius;
+                        float maxY = auxBlob.y + auxBlob.radius;
+                        if (i >= minX && i <= maxX && j >= minY && j <= maxY)
+                        {
+                            switch (auxBlob.profile)
+                            {
+                                case 0:
+                                    alt += gauss(auxBlob.radius/2, 10.0f, (auxVec1 - auxVec2).magnitude);
+                                    break;
+                                case 1:
+                                    alt += auxBlob.radius / 2;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            count++;
+                        }
                     }
                 }
                 worldHeights[i, j] = alt;
             }
         }
-
+        Debug.Log("Cuadraos = " + count.ToString());
         //normalitzem les alçades
         count = 0;
         for (int i = 0; i < width; i++)
@@ -80,6 +116,7 @@ public class HeightMapGenerator {
         //byte[] bytes = imatgeBN.EncodeToPNG();
         //File.WriteAllBytes(Application.dataPath + "/../imgOriginal.png", bytes);
 
+        imatgeBN = Soroll.aplicaSorollCostes(imatgeBN, width, depth);
         TextureScale.Bilinear(imatgeBN, heightmapResolution, heightmapResolution);
 
         //bytes = imatgeBN.EncodeToPNG();
@@ -97,10 +134,14 @@ public class HeightMapGenerator {
         return mapHeights;
     }
 
-    private float gauss(float b, float c, float x)
+    //Retorna l'alçada d'una X respecte el su centre en un campana de gawuss
+    //hmax:     Alçada màxima presa quan la X = 0
+    //sigma:    Amplada de la campana
+    //x:        Punt a calcular
+    private float gauss(float hmax, float sigma, float x)
     {
-        float a = 1/ (c * Mathf.Sqrt(2*Mathf.PI));
-        return (a * Mathf.Exp( ( ((x-b)*(x-b)) / (2*c*c) ) ) ) * 3;
+        float a = Mathf.Pow((x / sigma), 2) * -1;
+        return hmax * Mathf.Exp(a);
     }
 
     public float[,] generateHeightMap(int width, int height, int depth, int heightmapResolution, int nBlobs)
@@ -113,14 +154,16 @@ public class HeightMapGenerator {
 
         Blob[] illes = new Blob[nBlobs];
         float radi, auxX, auxY;//coordenades auxiliar per a generar els randoms
+        int auxShape = 0, auxProfile = 0;
 
         for (int i = 0; i < nBlobs; i++)
         {
             radi = Random.Range(0, height / 4);
             auxX = Random.Range((int)width / 4, (int)3 * width / 4);
             auxY = Random.Range((int)depth / 4, (int)3 * depth / 4);
-
-            illes[i] = new Blob(radi, auxX, auxY);
+            auxShape = Random.Range(0, 2);
+            auxProfile = Random.Range(0, 3);
+            illes[i] = new Blob(radi, auxX, auxY, auxShape, 0);
         }
 
         return giveHeightMap(illes);

@@ -53,11 +53,11 @@ public static class BlobGen {
         bool surt = true;
         while (surt)
         {
-            if (x + radius <= width && y + radius < depth && x >= radius && y >= radius) return new Blob(radius, x, y);
+            if (x + radius <= width && y + radius < depth && x >= radius && y >= radius) return new Blob(radius, x, y, 1, 0);
             x = Random.Range(0, width);
             y = Random.Range(0, depth);
             radius = Random.Range(0, height);
         }
-        return new Blob(0.0f, 0.0f, 0.0f);
+        return new Blob(0.0f, 0.0f, 0.0f, 1, 0);
     }
 }
