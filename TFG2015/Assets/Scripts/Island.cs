@@ -66,8 +66,10 @@ public class Island : MonoBehaviour {
         MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
         Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
         meshFilter.mesh = mesh;
+        gameObject.AddComponent<MeshCollider>();
+        
 
-        meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
+        meshRenderer.material.shader = Shader.Find("Standard");
 
         /*setColorSelection(mesh);
         Material[] mats = new Material[6];
