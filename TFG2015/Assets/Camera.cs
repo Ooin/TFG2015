@@ -15,8 +15,11 @@ public class Camera : MonoBehaviour {
     private float relativeDistance;
 
     public Vector3 centre;
+    private Vector3 previousPosition;
+    private Vector3 actualPosition;
 
     private RaycastHit impact;
+    private CharacterController controller;
 
 
 	// Use this for initialization
@@ -30,6 +33,8 @@ public class Camera : MonoBehaviour {
         
         mouseSensitivityX = 2.5f;
         mouseSensitivityY = 2.5f;
+
+        controller = transform.GetComponent<CharacterController>();
 
     }
 	
@@ -48,13 +53,14 @@ public class Camera : MonoBehaviour {
 
 
         //calculs varis
-        Physics.Raycast(transform.position, transform.forward, out impact, distanceMax);
+        previousPosition = transform.position;
+        Physics.Raycast(transform.position - transform.forward * distanceMax, transform.forward, out impact, 2*distanceMax);
         float impactToCenterDistance = Vector3.Distance(centre, impact.point);
         relativeDistance = impactToCenterDistance + distance;
 
-        this.transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(angleSight, objectivePosition, 0.0f), 0.1f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(angleSight, objectivePosition, 0.0f), 0.1f);
         interpolatedDistance = Mathf.Lerp(interpolatedDistance, relativeDistance, 0.05f);
-        this.transform.position = centre + transform.rotation * Vector3.forward * -interpolatedDistance;
-
+        actualPosition = centre + transform.rotation * Vector3.forward * -interpolatedDistance;
+        controller.Move(actualPosition - previousPosition);
 	}
 }

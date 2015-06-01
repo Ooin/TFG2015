@@ -81,7 +81,7 @@ public class Island : MonoBehaviour {
         mats[5] = Resources.Load("snow", typeof(Material)) as Material;
 
         meshRenderer.materials = mats;*/
-        setGodusShape(mesh);
+        //setGodusShape(mesh);
 
         Destroy(terrain);
         Destroy(terrainCollider);
