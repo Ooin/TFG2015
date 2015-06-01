@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Camera.cs" />
      <Compile Include="Assets\Scripts\Blob.cs" />
      <Compile Include="Assets\Scripts\BlobGen.cs" />
      <Compile Include="Assets\Scripts\ExportTerrain.cs" />

@@ -67,9 +67,9 @@ public class Island : MonoBehaviour {
         Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
         meshFilter.mesh = mesh;
 
-        //meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
+        meshRenderer.material.shader = Shader.Find("Custom/Vertex Colored");
 
-        setColorSelection(mesh);
+        /*setColorSelection(mesh);
         Material[] mats = new Material[6];
         mats[0] = Resources.Load("water", typeof(Material)) as Material;
         mats[1] = Resources.Load("sand", typeof(Material)) as Material;
@@ -78,8 +78,8 @@ public class Island : MonoBehaviour {
         mats[4] = Resources.Load("stone", typeof(Material)) as Material;
         mats[5] = Resources.Load("snow", typeof(Material)) as Material;
 
-        meshRenderer.materials = mats;
-        //setGodusShape(mesh);
+        meshRenderer.materials = mats;*/
+        setGodusShape(mesh);
 
         Destroy(terrain);
         Destroy(terrainCollider);
