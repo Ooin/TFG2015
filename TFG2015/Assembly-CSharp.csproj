@@ -46,15 +46,16 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Camera.cs" />
      <Compile Include="Assets\Scripts\Blob.cs" />
      <Compile Include="Assets\Scripts\BlobGen.cs" />
+     <Compile Include="Assets\Scripts\Camara.cs" />
      <Compile Include="Assets\Scripts\ExportTerrain.cs" />
      <Compile Include="Assets\Scripts\HeightMapGenerator.cs" />
      <Compile Include="Assets\Scripts\Island.cs" />
      <Compile Include="Assets\Scripts\Soroll.cs" />
      <Compile Include="Assets\Scripts\TextureScale.cs" />
      <Compile Include="Assets\Scripts\Tris.cs" />
+     <Compile Include="Assets\Scripts\UIController.cs" />
      <None Include="Assets\Scripts\Color.shader" />
      <None Include="Assets\Scripts\NewShader.shader" />
  <Reference Include="UnityEngine.UI">

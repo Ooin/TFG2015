@@ -27,6 +27,8 @@ public class Island : MonoBehaviour {
     //Numero de blobs que es generen
     public int nBlobs;
 
+    //private GameObject camera;
+
     //ELIMINAR SI O SI
 
     private List<Vector2> border_pixels;
@@ -45,15 +47,24 @@ public class Island : MonoBehaviour {
 	void Start ()
     {
         init();
+        gameObject.AddComponent<MeshCollider>();
+        generateNewIsland(false , new Vector3(100, 100, 100));
+	}
+
+    public void generateNewIsland(bool godus, Vector3 size)
+    {
+        width = (int)size.x;
+        height = (int)size.y;
+        depth = (int)size.z;
         TerrainCollider terrainCollider = gameObject.AddComponent<TerrainCollider>();
         Terrain terrain = gameObject.AddComponent<Terrain>();
-		TerrainData illa = new TerrainData ();
+        TerrainData illa = new TerrainData();
 
         illa.heightmapResolution = heightmapResolution;
         illa.size = new Vector3(width, height, depth);
-        
-		terrainCollider.terrainData= illa;
-		terrain.terrainData = illa;
+
+        terrainCollider.terrainData = illa;
+        terrain.terrainData = illa;
 
         HeightMapGenerator generator = new HeightMapGenerator();
 
@@ -66,28 +77,40 @@ public class Island : MonoBehaviour {
         MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
         Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
         meshFilter.mesh = mesh;
-        gameObject.AddComponent<MeshCollider>();
-        
+
 
         meshRenderer.material.shader = Shader.Find("Standard");
 
-        /*setColorSelection(mesh);
-        Material[] mats = new Material[6];
-        mats[0] = Resources.Load("water", typeof(Material)) as Material;
-        mats[1] = Resources.Load("sand", typeof(Material)) as Material;
-        mats[2] = Resources.Load("forest", typeof(Material)) as Material;
-        mats[3] = Resources.Load("grass", typeof(Material)) as Material;
-        mats[4] = Resources.Load("stone", typeof(Material)) as Material;
-        mats[5] = Resources.Load("snow", typeof(Material)) as Material;
+        //setColorSelection(mesh, godus);
 
-        meshRenderer.materials = mats;*/
-        //setGodusShape(mesh);
+        if (!godus)
+        {
+            Material[] mats;
+            mats = new Material[6];
+            mats[0] = Resources.Load("water", typeof(Material)) as Material;
+            mats[1] = Resources.Load("sand", typeof(Material)) as Material;
+            mats[2] = Resources.Load("forest", typeof(Material)) as Material;
+            mats[3] = Resources.Load("grass", typeof(Material)) as Material;
+            mats[4] = Resources.Load("stone", typeof(Material)) as Material;
+            mats[5] = Resources.Load("snow", typeof(Material)) as Material;
+            meshRenderer.materials = mats;
+        }
+
+        if (godus)
+        {
+            meshRenderer.materials = new Material[1];
+            meshRenderer.material.shader = Shader.Find("Standard");
+            setGodusShape(mesh);
+        }
+
+        mesh.RecalculateNormals();
 
         Destroy(terrain);
         Destroy(terrainCollider);
         Destroy(illa);
-	
-	}
+
+        Camera.main.GetComponent<Camara>().centre = new Vector3(-width / 2, 0, depth / 2);
+    }
 
     private void setGodusShape(Mesh mesh)
     {
@@ -123,11 +146,10 @@ public class Island : MonoBehaviour {
         mesh.RecalculateNormals();
     }
 
-    private void setColorSelection(Mesh mesh)
+    private void setColorSelection(Mesh mesh, bool godus)
     {
         float alt = 0.0f;
         float maxAlt = 0.0f;
-        
         //La List<Tris> no em permet fer el ADD de l'objecte Tris aixi que ho farem tot parametritzat
         List<int> trisNeu = new List<int>(); trisNeu.Capacity = mesh.triangles.Length * 2 / 3;
         List<int> trisPedra = new List<int>(); trisPedra.Capacity = mesh.triangles.Length * 2 / 3;
@@ -152,87 +174,97 @@ public class Island : MonoBehaviour {
         {
             if (aux.y > maxAlt) maxAlt = aux.y;
         }
-        
-        for (int i = 0; i < mesh.triangles.Length; i+=3)
+        Debug.Log(Time.realtimeSinceStartup);
+        if (!godus)
         {
-            y1 = mesh.vertices[mesh.triangles[i]].y;
-            y2 = mesh.vertices[mesh.triangles[i + 1]].y;
-            y3 = mesh.vertices[mesh.triangles[i + 2]].y;
+            for (int i = 0; i < mesh.triangles.Length; i += 3)
+            {
+                y1 = mesh.vertices[mesh.triangles[i]].y;
+                y2 = mesh.vertices[mesh.triangles[i + 1]].y;
+                y3 = mesh.vertices[mesh.triangles[i + 2]].y;
 
-            alt = ((y1 + y2 + y3) / 3)/maxAlt;
-            
-            if (alt >= 0.95f)
-            {
-                auxList = trisNeu;
-                /*
-                trisNeu[indexNeu] = mesh.triangles[i];
-                trisNeu[indexNeu+1] = mesh.triangles[i+1];
-                trisNeu[indexNeu+2] = mesh.triangles[i+2];
-                indexNeu += 3;
-                 */
-            }
-            else if (alt > 0.75f)
-            {
-                auxList = trisPedra;
-                /*
-                trisPedra[indexPedra] = mesh.triangles[i];
-                trisPedra[indexPedra + 1] = mesh.triangles[i + 1];
-                trisPedra[indexPedra + 2] = mesh.triangles[i + 2];
-                indexPedra += 3;
-                 */
-            }
-            else if (alt > 0.5f)
-            {
-                auxList = trisGespa;
-                /*trisGespa[indexGespa] = mesh.triangles[i];
-                trisGespa[indexGespa + 1] = mesh.triangles[i + 1];
-                trisGespa[indexGespa + 2] = mesh.triangles[i + 2];
-                indexGespa += 3;*/
-            }
-            else if (alt > 0.15f)
-            {
-                auxList = trisBosc;
-                /*
-                trisBosc[indexBosc] = mesh.triangles[i];
-                trisBosc[indexBosc + 1] = mesh.triangles[i + 1];
-                trisBosc[indexBosc + 2] = mesh.triangles[i + 2];
-                indexBosc += 3;
-                 */
-            }
-            else if (alt != 0)
-            {
-                auxList = trisSorra;
-                /*
-                trisSorra[indexSorra] = mesh.triangles[i];
-                trisSorra[indexSorra + 1] = mesh.triangles[i + 1];
-                trisSorra[indexSorra + 2] = mesh.triangles[i + 2];
-                indexSorra += 3;
-                 */
-            }
-            else
-            {
-                auxList = trisAigua;
-                /*
-                trisAigua[indexAigua] = mesh.triangles[i];
-                trisAigua[indexAigua + 1] = mesh.triangles[i + 1];
-                trisAigua[indexAigua + 2] = mesh.triangles[i + 2];
-                indexAigua += 3;
-                 */
-            }
-            auxList.Add(mesh.triangles[i]);
-            auxList.Add(mesh.triangles[i+1]);
-            auxList.Add(mesh.triangles[i+2]);
+                alt = ((y1 + y2 + y3) / 3) / maxAlt;
 
-        
+                if (alt >= 0.95f)
+                {
+                    auxList = trisNeu;
+                    /*
+                    trisNeu[indexNeu] = mesh.triangles[i];
+                    trisNeu[indexNeu+1] = mesh.triangles[i+1];
+                    trisNeu[indexNeu+2] = mesh.triangles[i+2];
+                    indexNeu += 3;
+                     */
+                }
+                else if (alt > 0.75f)
+                {
+                    auxList = trisPedra;
+                    /*
+                    trisPedra[indexPedra] = mesh.triangles[i];
+                    trisPedra[indexPedra + 1] = mesh.triangles[i + 1];
+                    trisPedra[indexPedra + 2] = mesh.triangles[i + 2];
+                    indexPedra += 3;
+                     */
+                }
+                else if (alt > 0.5f)
+                {
+                    auxList = trisGespa;
+                    /*trisGespa[indexGespa] = mesh.triangles[i];
+                    trisGespa[indexGespa + 1] = mesh.triangles[i + 1];
+                    trisGespa[indexGespa + 2] = mesh.triangles[i + 2];
+                    indexGespa += 3;*/
+                }
+                else if (alt > 0.15f)
+                {
+                    auxList = trisBosc;
+                    /*
+                    trisBosc[indexBosc] = mesh.triangles[i];
+                    trisBosc[indexBosc + 1] = mesh.triangles[i + 1];
+                    trisBosc[indexBosc + 2] = mesh.triangles[i + 2];
+                    indexBosc += 3;
+                     */
+                }
+                else if (alt != 0)
+                {
+                    auxList = trisSorra;
+                    /*
+                    trisSorra[indexSorra] = mesh.triangles[i];
+                    trisSorra[indexSorra + 1] = mesh.triangles[i + 1];
+                    trisSorra[indexSorra + 2] = mesh.triangles[i + 2];
+                    indexSorra += 3;
+                     */
+                }
+                else
+                {
+                    auxList = trisAigua;
+                    /*
+                    trisAigua[indexAigua] = mesh.triangles[i];
+                    trisAigua[indexAigua + 1] = mesh.triangles[i + 1];
+                    trisAigua[indexAigua + 2] = mesh.triangles[i + 2];
+                    indexAigua += 3;
+                     */
+                }
+                auxList.Add(mesh.triangles[i]);
+                auxList.Add(mesh.triangles[i + 1]);
+                auxList.Add(mesh.triangles[i + 2]);
+
+
+            }
+            Debug.Log(Time.realtimeSinceStartup);
+            mesh.subMeshCount = 6;
+
+            mesh.SetTriangles(trisAigua.ToArray(), 0);
+            mesh.SetTriangles(trisSorra.ToArray(), 1);
+            mesh.SetTriangles(trisBosc.ToArray(), 2);
+            mesh.SetTriangles(trisGespa.ToArray(), 3);
+            mesh.SetTriangles(trisPedra.ToArray(), 4);
+            mesh.SetTriangles(trisNeu.ToArray(), 5);
+            Debug.Log(Time.realtimeSinceStartup);
         }
-        
-        mesh.subMeshCount = 6;
-        mesh.SetTriangles(trisAigua.ToArray(), 0);
-        mesh.SetTriangles(trisSorra.ToArray(), 1);
-        mesh.SetTriangles(trisBosc.ToArray(), 2);
-        mesh.SetTriangles(trisGespa.ToArray(), 3);
-        mesh.SetTriangles(trisPedra.ToArray(), 4);
-        mesh.SetTriangles(trisNeu.ToArray(), 5);
+        else
+        {
+
+        }
+
     }
 
     //inicialitzacio de les variables publiques a la primera execucio

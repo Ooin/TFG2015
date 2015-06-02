@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Camera : MonoBehaviour {
+public class Camara : MonoBehaviour {
 
     private float angleSight;
     private float objectivePosition;
@@ -25,11 +25,11 @@ public class Camera : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         distance = 100;
-        distanceMin = 10;
+        distanceMin = 1;
         distanceMax = 250;
         interpolatedDistance = distance;
 
-        centre = new Vector3(-50, 0, 50);
+        centre = new Vector3(0, 0, 0);
         
         mouseSensitivityX = 2.5f;
         mouseSensitivityY = 2.5f;
@@ -40,9 +40,13 @@ public class Camera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
         //input
-        objectivePosition += Input.GetAxis("Mouse X") * mouseSensitivityX;
-        angleSight -= Input.GetAxis("Mouse Y") * mouseSensitivityY;
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            objectivePosition += Input.GetAxis("Mouse X") * mouseSensitivityX;
+            angleSight -= Input.GetAxis("Mouse Y") * mouseSensitivityY;
+        }
 
         if (Input.GetAxis("Mouse ScrollWheel") > 0) distance -= 10;
         else if (Input.GetAxis("Mouse ScrollWheel") < 0) distance += 10;
