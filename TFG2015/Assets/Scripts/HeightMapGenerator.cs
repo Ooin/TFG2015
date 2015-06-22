@@ -18,7 +18,7 @@ public class HeightMapGenerator {
     private int width;
     private int depth;
     private int heightmapResolution;
-
+    
     public HeightMapGenerator() { }
 
     private float[,] giveHeightMap(Blob[] illes)
@@ -26,11 +26,9 @@ public class HeightMapGenerator {
         float[,] worldHeights = new float[width, depth];
         Texture2D imatgeBN = new Texture2D(width, depth);
         Vector2 auxVec1, auxVec2;
-        float dist, alt, auxAlt;
+        float dist, alt;
         int count = 0;
-        float aux;
-        float a, b, c, e = (float)System.Math.E;
-               
+                       
         //generem el mapa en coordenades de mon
         for (int i = 0; i < width; i++)
         {
@@ -86,14 +84,14 @@ public class HeightMapGenerator {
                                 default:
                                     break;
                             }
-                            count++;
+                            
                         }
                     }
                 }
                 worldHeights[i, j] = alt;
             }
         }
-        Debug.Log("Cuadraos = " + count.ToString());
+        
         //normalitzem les alçades
         count = 0;
         for (int i = 0; i < width; i++)
@@ -116,7 +114,7 @@ public class HeightMapGenerator {
         //byte[] bytes = imatgeBN.EncodeToPNG();
         //File.WriteAllBytes(Application.dataPath + "/../imgOriginal.png", bytes);
 
-        imatgeBN = Soroll.aplicaSorollCostes(imatgeBN, width, depth);
+        //imatgeBN = Soroll.aplicaSorollCostes(imatgeBN, width, depth);
         TextureScale.Bilinear(imatgeBN, heightmapResolution, heightmapResolution);
 
         //bytes = imatgeBN.EncodeToPNG();
@@ -144,7 +142,7 @@ public class HeightMapGenerator {
         return hmax * Mathf.Exp(a);
     }
 
-    public float[,] generateHeightMap(int width, int height, int depth, int heightmapResolution, int nBlobs)
+    public float[,] generateHeightMap(int width, int height, int depth, int heightmapResolution, int nBlobs, int profile)
     {
 
         this.width = width;
@@ -154,7 +152,7 @@ public class HeightMapGenerator {
 
         Blob[] illes = new Blob[nBlobs];
         float radi, auxX, auxY;//coordenades auxiliar per a generar els randoms
-        int auxShape = 0, auxProfile = 0;
+        int auxShape = 0;
 
         for (int i = 0; i < nBlobs; i++)
         {
@@ -162,8 +160,9 @@ public class HeightMapGenerator {
             auxX = Random.Range((int)width / 4, (int)3 * width / 4);
             auxY = Random.Range((int)depth / 4, (int)3 * depth / 4);
             auxShape = Random.Range(0, 2);
-            auxProfile = Random.Range(0, 3);
-            illes[i] = new Blob(radi, auxX, auxY, auxShape, 0);
+           
+            
+            illes[i] = new Blob(radi, auxX, auxY, auxShape, profile);
         }
 
         return giveHeightMap(illes);

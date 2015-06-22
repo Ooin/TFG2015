@@ -30,9 +30,20 @@ class ExportTerrain
     List<int> trisBosc;
     List<int> trisSorra;
     List<int> trisAigua;
+    List<int> trisGodus1;
+    List<int> trisGodus2;
+    List<int> trisGodus3;
+    List<int> trisGodus4;
+    List<int> trisGodus5;
+    List<int> trisGodus6;
+    List<int> trisGodus7;
+    List<int> trisGodus8;
+    List<int> trisGodus9;
+    List<int> trisGodus10;
+
 
     //[MenuItem("Terrain/Export To Obj...")]
-    public Mesh Init(Terrain terrainObject, SaveFormat saveFormat, SaveResolution saveResolution)
+    public Mesh Init(Terrain terrainObject, SaveFormat saveFormat, SaveResolution saveResolution, bool godus)
     {
         terrain = null;
         //Terrain terrainObject = Selection.activeObject as Terrain;
@@ -56,12 +67,22 @@ class ExportTerrain
         trisBosc = new List<int>();
         trisSorra = new List<int>();
         trisAigua = new List<int>();
+        trisGodus1 = new List<int>();
+        trisGodus2 = new List<int>();
+        trisGodus3 = new List<int>();
+        trisGodus4 = new List<int>();
+        trisGodus5 = new List<int>();
+        trisGodus6 = new List<int>();
+        trisGodus7 = new List<int>();
+        trisGodus8 = new List<int>();
+        trisGodus9 = new List<int>();
+        trisGodus10 = new List<int>();
 
-        Mesh temp = Export();
+        Mesh temp = Export(godus);
         return temp;
     }
     
-    private Mesh Export()
+    private Mesh Export(bool godus)
     {
         string fileName = (String)Directory.GetCurrentDirectory() + "\\terrain.obj";// EditorUtility.SaveFilePanel("Export .obj file", "", "Terrain", "obj");
         int w = terrain.heightmapWidth;
@@ -88,7 +109,7 @@ class ExportTerrain
             tPolys = new int[(w - 1) * (h - 1) * 4];
         }
 
-        float maxAlt = 0.0f;
+        float maxAlt = 0.0f, alt = 0.0f;
 
         // Build vertices and UVs
         for (int y = 0; y < h; y++)
@@ -101,7 +122,26 @@ class ExportTerrain
             }
         }
 
-        float alt = 0.0f, y1 = 0.0f, y2 = 0.0f, y3 = 0.0f;
+        if (godus)
+        {
+            for (int i = 0; i < tVertices.Length; i++)
+            {
+                alt = tVertices[i].y / maxAlt;
+                if (alt > 0.9) tVertices[i].y = maxAlt * 1.0f;
+                else if (alt > 0.8f) tVertices[i].y = maxAlt * 0.9f;
+                else if (alt > 0.7f) tVertices[i].y = maxAlt * 0.8f;
+                else if (alt > 0.6f) tVertices[i].y = maxAlt * 0.7f;
+                else if (alt > 0.5f) tVertices[i].y = maxAlt * 0.6f;
+                else if (alt > 0.4f) tVertices[i].y = maxAlt * 0.5f;
+                else if (alt > 0.3f) tVertices[i].y = maxAlt * 0.4f;
+                else if (alt > 0.2f) tVertices[i].y = maxAlt * 0.3f;
+                else if (alt > 0.1f) tVertices[i].y = maxAlt * 0.2f;
+                else if (alt != 0.0f) tVertices[i].y = maxAlt * 0.1f;
+                else tVertices[i].y = 0.0f;
+            }
+        }
+
+        float y1 = 0.0f, y2 = 0.0f, y3 = 0.0f;
         int index = 0;
         Mesh mesh = new Mesh();
         // Build triangle indices: 3 indices into vertex array for each triangle
@@ -120,7 +160,7 @@ class ExportTerrain
 
                 alt = ((y1 + y2 + y3) / 3) / maxAlt;
 
-                addSubMesh(alt, tPolys[index - 3], tPolys[index - 2], tPolys[index - 1]);
+                addSubMesh(alt, tPolys[index - 3], tPolys[index - 2], tPolys[index - 1], godus);
                     
                 tPolys[index++] = ((y + 1) * w) + x;
                 tPolys[index++] = ((y + 1) * w) + x + 1;
@@ -132,7 +172,7 @@ class ExportTerrain
 
                 alt = ((y1 + y2 + y3) / 3) / maxAlt;
 
-                addSubMesh(alt, tPolys[index - 3], tPolys[index - 2], tPolys[index - 1]);
+                addSubMesh(alt, tPolys[index - 3], tPolys[index - 2], tPolys[index - 1], godus);
             }
         }
         
@@ -141,83 +181,69 @@ class ExportTerrain
         //tUV conté totes les UVs
         //tPolys conté els triangles.
 
-        
         mesh.vertices = tVertices;
         mesh.triangles = tPolys;
         mesh.uv = tUV;
-
-        mesh.subMeshCount = 6;
-        mesh.SetTriangles(trisAigua.ToArray(), 0);
-        mesh.SetTriangles(trisSorra.ToArray(), 1);
-        mesh.SetTriangles(trisBosc.ToArray(), 2);
-        mesh.SetTriangles(trisGespa.ToArray(), 3);
-        mesh.SetTriangles(trisPedra.ToArray(), 4);
-        mesh.SetTriangles(trisNeu.ToArray(), 5);
-
-        return mesh;
-    }
-
-    void addSubMesh(float alt, int idx1, int idx2, int idx3)
-    {
-        List<int> auxList;
-
-        if (alt >= 0.95f)
+        if (!godus)
         {
-            auxList = trisNeu;
-            /*
-                    trisNeu[indexNeu] = mesh.triangles[i];
-                    trisNeu[indexNeu+1] = mesh.triangles[i+1];
-                    trisNeu[indexNeu+2] = mesh.triangles[i+2];
-                    indexNeu += 3;
-                     */
-        }
-        else if (alt > 0.75f)
-        {
-            auxList = trisPedra;
-            /*
-                    trisPedra[indexPedra] = mesh.triangles[i];
-                    trisPedra[indexPedra + 1] = mesh.triangles[i + 1];
-                    trisPedra[indexPedra + 2] = mesh.triangles[i + 2];
-                    indexPedra += 3;
-                     */
-        }
-        else if (alt > 0.5f)
-        {
-            auxList = trisGespa;
-            /*trisGespa[indexGespa] = mesh.triangles[i];
-                    trisGespa[indexGespa + 1] = mesh.triangles[i + 1];
-                    trisGespa[indexGespa + 2] = mesh.triangles[i + 2];
-                    indexGespa += 3;*/
-        }
-        else if (alt > 0.15f)
-        {
-            auxList = trisBosc;
-            /*
-                    trisBosc[indexBosc] = mesh.triangles[i];
-                    trisBosc[indexBosc + 1] = mesh.triangles[i + 1];
-                    trisBosc[indexBosc + 2] = mesh.triangles[i + 2];
-                    indexBosc += 3;
-                     */
-        }
-        else if (alt != 0)
-        {
-            auxList = trisSorra;
-            /*
-                    trisSorra[indexSorra] = mesh.triangles[i];
-                    trisSorra[indexSorra + 1] = mesh.triangles[i + 1];
-                    trisSorra[indexSorra + 2] = mesh.triangles[i + 2];
-                    indexSorra += 3;
-                     */
+            mesh.subMeshCount = 6;
+            mesh.SetTriangles(trisAigua.ToArray(), 0);
+            mesh.SetTriangles(trisSorra.ToArray(), 1);
+            mesh.SetTriangles(trisBosc.ToArray(), 2);
+            mesh.SetTriangles(trisGespa.ToArray(), 3);
+            mesh.SetTriangles(trisPedra.ToArray(), 4);
+            mesh.SetTriangles(trisNeu.ToArray(), 5);
         }
         else
         {
-            auxList = trisAigua;
-            /*
-                    trisAigua[indexAigua] = mesh.triangles[i];
-                    trisAigua[indexAigua + 1] = mesh.triangles[i + 1];
-                    trisAigua[indexAigua + 2] = mesh.triangles[i + 2];
-                    indexAigua += 3;
-                     */
+            mesh.subMeshCount = 11;
+            mesh.SetTriangles(trisAigua.ToArray(), 0);
+            mesh.SetTriangles(trisGodus1.ToArray(), 1);
+            mesh.SetTriangles(trisGodus2.ToArray(), 2);
+            mesh.SetTriangles(trisGodus3.ToArray(), 3);
+            mesh.SetTriangles(trisGodus4.ToArray(), 4);
+            mesh.SetTriangles(trisGodus5.ToArray(), 5);
+            mesh.SetTriangles(trisGodus6.ToArray(), 6);
+            mesh.SetTriangles(trisGodus7.ToArray(), 7);
+            mesh.SetTriangles(trisGodus8.ToArray(), 8);
+            mesh.SetTriangles(trisGodus9.ToArray(), 9);
+            mesh.SetTriangles(trisGodus10.ToArray(), 10);
+
+        }
+        return mesh;
+    }
+
+    void addSubMesh(float alt, int idx1, int idx2, int idx3, bool godus)
+    {
+        List<int> auxList;
+        if (!godus)
+        {
+            if (alt >= 0.95f)
+                auxList = trisNeu;
+            else if (alt > 0.75f)
+                auxList = trisPedra;
+            else if (alt > 0.5f)
+                auxList = trisGespa;
+            else if (alt > 0.15f)
+                auxList = trisBosc;
+            else if (alt != 0)
+                auxList = trisSorra;
+            else
+                auxList = trisAigua;
+        }
+        else
+        {
+            if (alt > 0.9) auxList = trisGodus10;
+            else if (alt > 0.8f) auxList = trisGodus9;
+            else if (alt > 0.7f) auxList = trisGodus8;
+            else if (alt > 0.6f) auxList = trisGodus7;
+            else if (alt > 0.5f) auxList = trisGodus6;
+            else if (alt > 0.4f) auxList = trisGodus5;
+            else if (alt > 0.3f) auxList = trisGodus4;
+            else if (alt > 0.2f) auxList = trisGodus3;
+            else if (alt > 0.1f) auxList = trisGodus2;
+            else if (alt != 0.0f) auxList = trisGodus1;
+            else auxList = trisAigua;
         }
         auxList.Add(idx1);
         auxList.Add(idx2);

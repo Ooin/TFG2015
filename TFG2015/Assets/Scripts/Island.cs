@@ -6,7 +6,7 @@ using System.IO;
 public class Island : MonoBehaviour {
 
     //Definitives ISLAND.CS
-    private float[,] mapHeights;
+    public float[,] mapHeights;
 
     //Resolucion del heightmap en escales potencies de 2 fins a 2048
     public int heightmapResolution;
@@ -48,11 +48,12 @@ public class Island : MonoBehaviour {
     {
         init();
         gameObject.AddComponent<MeshCollider>();
-        generateNewIsland(false , new Vector3(100, 100, 100));
+        generateNewIsland(false , new Vector3(100, 100, 100), nBlobs, 0);
 	}
 
-    public void generateNewIsland(bool godus, Vector3 size)
+    public void generateNewIsland(bool godus, Vector3 size, int numBlobs, int shape)
     {
+        nBlobs = numBlobs;
         width = (int)size.x;
         height = (int)size.y;
         depth = (int)size.z;
@@ -68,24 +69,25 @@ public class Island : MonoBehaviour {
 
         HeightMapGenerator generator = new HeightMapGenerator();
 
-        mapHeights = generator.generateHeightMap(width, height, depth, heightmapResolution, nBlobs);
+        mapHeights = generator.generateHeightMap(width, height, depth, heightmapResolution, nBlobs, shape);
 
         terrain.terrainData.SetHeights(0, 0, mapHeights);
 
         ExportTerrain exportador = new ExportTerrain();
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
         MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-        Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Half);
+        Mesh mesh = exportador.Init(terrain, SaveFormat.Triangles, SaveResolution.Full, godus);
         meshFilter.mesh = mesh;
 
 
         meshRenderer.material.shader = Shader.Find("Standard");
 
         //setColorSelection(mesh, godus);
-
+        
+        Material[] mats;
+        
         if (!godus)
         {
-            Material[] mats;
             mats = new Material[6];
             mats[0] = Resources.Load("water", typeof(Material)) as Material;
             mats[1] = Resources.Load("sand", typeof(Material)) as Material;
@@ -98,9 +100,21 @@ public class Island : MonoBehaviour {
 
         if (godus)
         {
-            meshRenderer.materials = new Material[1];
-            meshRenderer.material.shader = Shader.Find("Standard");
-            setGodusShape(mesh);
+            mats = new Material[11];
+            mats[0] = Resources.Load("water", typeof(Material)) as Material;
+            mats[1] = Resources.Load("godus1", typeof(Material)) as Material;
+            mats[2] = Resources.Load("godus2", typeof(Material)) as Material;
+            mats[3] = Resources.Load("godus3", typeof(Material)) as Material;
+            mats[4] = Resources.Load("godus4", typeof(Material)) as Material;
+            mats[5] = Resources.Load("godus5", typeof(Material)) as Material;
+            mats[6] = Resources.Load("godus6", typeof(Material)) as Material;
+            mats[7] = Resources.Load("godus7", typeof(Material)) as Material;
+            mats[8] = Resources.Load("godus8", typeof(Material)) as Material;
+            mats[9] = Resources.Load("godus9", typeof(Material)) as Material;
+            mats[10] = Resources.Load("godus10", typeof(Material)) as Material;
+
+            meshRenderer.materials = mats;
+            
         }
 
         mesh.RecalculateNormals();
@@ -142,8 +156,6 @@ public class Island : MonoBehaviour {
         }
 
         mesh.vertices = vertexs;
-        mesh.RecalculateBounds();
-        mesh.RecalculateNormals();
     }
 
     private void setColorSelection(Mesh mesh, bool godus)

@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\BlobGen.cs" />
      <Compile Include="Assets\Scripts\Camara.cs" />
      <Compile Include="Assets\Scripts\ExportTerrain.cs" />
+     <Compile Include="Assets\Scripts\Exporters.cs" />
      <Compile Include="Assets\Scripts\HeightMapGenerator.cs" />
      <Compile Include="Assets\Scripts\Island.cs" />
      <Compile Include="Assets\Scripts\Soroll.cs" />

@@ -25,7 +25,7 @@ public class Camara : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         distance = 100;
-        distanceMin = 1;
+        distanceMin = 0.1f;
         distanceMax = 250;
         interpolatedDistance = distance;
 
