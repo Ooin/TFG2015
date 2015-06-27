@@ -72,7 +72,7 @@ public class Island : MonoBehaviour {
         mapHeights = generator.generateHeightMap(width, height, depth, heightmapResolution, nBlobs, shape);
 
         terrain.terrainData.SetHeights(0, 0, mapHeights);
-
+        
         ExportTerrain exportador = new ExportTerrain();
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
         MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
@@ -82,8 +82,6 @@ public class Island : MonoBehaviour {
 
         meshRenderer.material.shader = Shader.Find("Standard");
 
-        //setColorSelection(mesh, godus);
-        
         Material[] mats;
         
         if (!godus)
@@ -156,127 +154,6 @@ public class Island : MonoBehaviour {
         }
 
         mesh.vertices = vertexs;
-    }
-
-    private void setColorSelection(Mesh mesh, bool godus)
-    {
-        float alt = 0.0f;
-        float maxAlt = 0.0f;
-        //La List<Tris> no em permet fer el ADD de l'objecte Tris aixi que ho farem tot parametritzat
-        List<int> trisNeu = new List<int>(); trisNeu.Capacity = mesh.triangles.Length * 2 / 3;
-        List<int> trisPedra = new List<int>(); trisPedra.Capacity = mesh.triangles.Length * 2 / 3;
-        List<int> trisGespa = new List<int>(); trisGespa.Capacity = mesh.triangles.Length * 2 / 3;
-        List<int> trisBosc = new List<int>(); trisBosc.Capacity = mesh.triangles.Length * 2 / 3;
-        List<int> trisSorra = new List<int>(); trisSorra.Capacity = mesh.triangles.Length * 2 / 3;
-        List<int> trisAigua = new List<int>(); trisAigua.Capacity = mesh.triangles.Length * 2 / 3;
-        List<int> auxList = new List<int>();
-        /*
-        int[] trisNeu = new int[mesh.triangles.Length];
-        int[] trisPedra = new int[mesh.triangles.Length];
-        int[] trisGespa = new int[mesh.triangles.Length];
-        int[] trisBosc = new int[mesh.triangles.Length];
-        int[] trisSorra = new int[mesh.triangles.Length];
-        int[] trisAigua = new int[mesh.triangles.Length];
-        */
-        int indexNeu = 0, indexPedra = 0, indexGespa = 0, indexSorra = 0, indexAigua = 0, indexBosc = 0, indexAuxList = 0;
-
-        float y1, y2, y3;
-
-        foreach (Vector3 aux in mesh.vertices)
-        {
-            if (aux.y > maxAlt) maxAlt = aux.y;
-        }
-        Debug.Log(Time.realtimeSinceStartup);
-        if (!godus)
-        {
-            for (int i = 0; i < mesh.triangles.Length; i += 3)
-            {
-                y1 = mesh.vertices[mesh.triangles[i]].y;
-                y2 = mesh.vertices[mesh.triangles[i + 1]].y;
-                y3 = mesh.vertices[mesh.triangles[i + 2]].y;
-
-                alt = ((y1 + y2 + y3) / 3) / maxAlt;
-
-                if (alt >= 0.95f)
-                {
-                    auxList = trisNeu;
-                    /*
-                    trisNeu[indexNeu] = mesh.triangles[i];
-                    trisNeu[indexNeu+1] = mesh.triangles[i+1];
-                    trisNeu[indexNeu+2] = mesh.triangles[i+2];
-                    indexNeu += 3;
-                     */
-                }
-                else if (alt > 0.75f)
-                {
-                    auxList = trisPedra;
-                    /*
-                    trisPedra[indexPedra] = mesh.triangles[i];
-                    trisPedra[indexPedra + 1] = mesh.triangles[i + 1];
-                    trisPedra[indexPedra + 2] = mesh.triangles[i + 2];
-                    indexPedra += 3;
-                     */
-                }
-                else if (alt > 0.5f)
-                {
-                    auxList = trisGespa;
-                    /*trisGespa[indexGespa] = mesh.triangles[i];
-                    trisGespa[indexGespa + 1] = mesh.triangles[i + 1];
-                    trisGespa[indexGespa + 2] = mesh.triangles[i + 2];
-                    indexGespa += 3;*/
-                }
-                else if (alt > 0.15f)
-                {
-                    auxList = trisBosc;
-                    /*
-                    trisBosc[indexBosc] = mesh.triangles[i];
-                    trisBosc[indexBosc + 1] = mesh.triangles[i + 1];
-                    trisBosc[indexBosc + 2] = mesh.triangles[i + 2];
-                    indexBosc += 3;
-                     */
-                }
-                else if (alt != 0)
-                {
-                    auxList = trisSorra;
-                    /*
-                    trisSorra[indexSorra] = mesh.triangles[i];
-                    trisSorra[indexSorra + 1] = mesh.triangles[i + 1];
-                    trisSorra[indexSorra + 2] = mesh.triangles[i + 2];
-                    indexSorra += 3;
-                     */
-                }
-                else
-                {
-                    auxList = trisAigua;
-                    /*
-                    trisAigua[indexAigua] = mesh.triangles[i];
-                    trisAigua[indexAigua + 1] = mesh.triangles[i + 1];
-                    trisAigua[indexAigua + 2] = mesh.triangles[i + 2];
-                    indexAigua += 3;
-                     */
-                }
-                auxList.Add(mesh.triangles[i]);
-                auxList.Add(mesh.triangles[i + 1]);
-                auxList.Add(mesh.triangles[i + 2]);
-
-
-            }
-            Debug.Log(Time.realtimeSinceStartup);
-            mesh.subMeshCount = 6;
-
-            mesh.SetTriangles(trisAigua.ToArray(), 0);
-            mesh.SetTriangles(trisSorra.ToArray(), 1);
-            mesh.SetTriangles(trisBosc.ToArray(), 2);
-            mesh.SetTriangles(trisGespa.ToArray(), 3);
-            mesh.SetTriangles(trisPedra.ToArray(), 4);
-            mesh.SetTriangles(trisNeu.ToArray(), 5);
-            Debug.Log(Time.realtimeSinceStartup);
-        }
-        else
-        {
-
-        }
-
     }
 
     //inicialitzacio de les variables publiques a la primera execucio

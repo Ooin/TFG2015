@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Blob">
+    <Position X="4.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAEAAAAABgAAAABAA=</HashCode>
+      <FileName>Assets\Scripts\Blob.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlobGen">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAEAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\BlobGen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camara">
+    <Position X="10.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAwACAAAAEQCAAQAIQAAEAAAAAAAEAAAAIAggA=</HashCode>
+      <FileName>Assets\Scripts\Camara.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Exporters">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\Exporters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ExportTerrain">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAD/QAAAAAAASQABAAAkAAEAAGABYACAgBAEgA=</HashCode>
+      <FileName>Assets\Scripts\ExportTerrain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HeightMapGenerator">
+    <Position X="6.5" Y="2.25" Width="1.75" />
+    <Members>
+      <Method Name="Start" Hidden="true" />
+      <Method Name="Update" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Enum Name="HeightMapGenerator.SelectorColors" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\HeightMapGenerator.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAKAAAAQAQAAAAAAgAAAAAEAAAAABMAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\HeightMapGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Island">
+    <Position X="8.5" Y="0.5" Width="2" />
+    <Members>
+      <Method Name="Start" Hidden="true" />
+      <Method Name="Update" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Enum Name="Island.SelectorColors" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\Island.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAQAgQAAACAAAAQgwgAAAAAgBAAAAAoAAAQAIAAAAAQ=</HashCode>
+      <FileName>Assets\Scripts\Island.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soroll">
+    <Position X="12.75" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Soroll.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureScale">
+    <Position X="2.75" Y="0.5" Width="1.75" />
+    <NestedTypes>
+      <Class Name="TextureScale.ThreadData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\TextureScale.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAgACAAEAAABAAAAgAAAAAIAggASAAIEA=</HashCode>
+      <FileName>Assets\Scripts\TextureScale.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIController">
+    <Position X="14.75" Y="0.5" Width="1.5" />
+    <Members>
+      <Method Name="Update" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AERAgAAEAAAAAAAAAAAgEUAAAAIAEAQAAAAAEAAAMEA=</HashCode>
+      <FileName>Assets\Scripts\UIController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SaveFormat">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACBAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ExportTerrain.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SaveResolution">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAIAAAAAEBAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ExportTerrain.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

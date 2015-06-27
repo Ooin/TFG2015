@@ -37,6 +37,7 @@ public class UIController : MonoBehaviour {
         else if (cub.isOn) profile = 1;
         else profile = 2;
         illa.generateNewIsland(godus, coordenades, numBlobs, profile);
+        
     }
 
     public void getUIValueX(UnityEngine.UI.InputField IF)
@@ -80,5 +81,10 @@ public class UIController : MonoBehaviour {
 
         byte[] bytes = imatgeBN.EncodeToPNG();
         File.WriteAllBytes(Application.dataPath + "/../imgFinal.png", bytes);
+    }
+
+    public void surt()
+    {
+        Application.Quit();
     }
 }

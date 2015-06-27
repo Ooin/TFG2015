@@ -81,8 +81,6 @@ public class HeightMapGenerator {
                                 case 1:
                                     alt += auxBlob.radius / 2;
                                     break;
-                                default:
-                                    break;
                             }
                             
                         }

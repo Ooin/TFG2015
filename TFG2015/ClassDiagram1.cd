@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Blob" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAEAAAAABgAAAABAA=</HashCode>
+      <FileName>Assets\Scripts\Blob.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlobGen">
+    <Position X="9.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAEAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\BlobGen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camara" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAwACAAAAEQCAAQAIQAAEAAAAAAAEAAAAIAggA=</HashCode>
+      <FileName>Assets\Scripts\Camara.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Exporters" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\Exporters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ExportTerrain" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAD/QAAAAAAASQABAAAkAAEAAGABYACAgBAEgA=</HashCode>
+      <FileName>Assets\Scripts\ExportTerrain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HeightMapGenerator" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAKAAAAQAQAAAAAAgAAAAAEAAAAABMAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\HeightMapGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Island" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgQAAACAAAAQgwgAAAAAgBAAAAAoAAAQAIAAAAAQ=</HashCode>
+      <FileName>Assets\Scripts\Island.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Soroll" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Soroll.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureScale" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAgACAAEAAABAAAAgAAAAAIAggASAAIEA=</HashCode>
+      <FileName>Assets\Scripts\TextureScale.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tris" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Tris.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIController" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AERAgAAEAAAAAAAAAAAgEUAAAAIAEAQAAAAAEAAAMEA=</HashCode>
+      <FileName>Assets\Scripts\UIController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SaveFormat" Collapsed="true">
+    <Position X="0.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACBAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ExportTerrain.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SaveResolution" Collapsed="true">
+    <Position X="2.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAIAAAAAEBAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ExportTerrain.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
